@@ -13,7 +13,6 @@ clases = [
 ]
 base_dir = 'C:/Users/Karla/Documents/U3y4/Dataset'
 
-# Función para cargar y redimensionar imágenes
 def cargar_imagenes(base_dir, clases, tamaño=(150, 150)):
     imagenes = []
     etiquetas = []
@@ -30,16 +29,12 @@ def cargar_imagenes(base_dir, clases, tamaño=(150, 150)):
                     etiquetas.append(etiqueta)
     return np.array(imagenes), np.array(etiquetas)
 
-# Cargar todas las imágenes
 imagenes, etiquetas = cargar_imagenes(base_dir, clases)
 
-# Convertir etiquetas a One-Hot Encoding
 etiquetas_onehot = to_categorical(etiquetas, num_classes=len(clases))
 
-# Dividir datos en conjunto de entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(imagenes, etiquetas_onehot, test_size=0.2, random_state=42)
 
-# Crear el modelo CNN
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
     MaxPooling2D(2, 2),
@@ -50,20 +45,15 @@ model = Sequential([
     Dense(len(clases), activation='softmax')  # Salida con tantas neuronas como clases
 ])
 
-# Compilar el modelo
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Entrenar el modelo
 model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
 
-# Evaluar el modelo
 score = model.evaluate(X_test, y_test)
 print(f'Pérdida en test: {score[0]}, Precisión en test: {score[1]}')
 
-# Guardar el modelo entrenado
 model.save('modelo_alimentos.h5')
 
-# Predicción
 def predecir_imagen(imagen_path):
     img = cv2.imread(imagen_path)
     if img is not None:
@@ -76,6 +66,5 @@ def predecir_imagen(imagen_path):
     else:
         print(f"No se pudo cargar la imagen: {imagen_path}")
 
-# Predicción de ejemplo
 imagen_para_predecir = 'C:/Users/Karla/Documents/U3y4/Dataset/Bebidas procesadas/bebida_procesada-gatorade de Mandarina.jpg'
 predecir_imagen(imagen_para_predecir)
