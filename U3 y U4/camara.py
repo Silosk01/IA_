@@ -4,13 +4,12 @@ from tensorflow.keras.models import load_model # type: ignore
 
 model = load_model('modelo_alimentos.h5')
 
-# clases
 clases = [
     'Alimentos en conserva', 'Bebidas procesadas', 'Carnes procesadas', 'Comida lista para comer o precocinada',
     'Cereales procesados', 'Panaderia y pasteleria', 'Lacteos procesados', 'Snacks ultraprocesados'
 ]
 
-# preprocesar la imagen
+#imagen
 def preprocesar_imagen(frame, tamaño=(150, 150)):
     img_resized = cv2.resize(frame, tamaño)
     img_normalizada = img_resized / 255.0
@@ -32,25 +31,21 @@ while True:
         print("No se pudo capturar el frame.")
         break
 
-    # frame en tiempo real
     cv2.imshow("Cámara - Snack", frame)
 
-    # frame para la predicción
+    #predicción
     img_preprocesada = preprocesar_imagen(frame)
 
-    # Realizar la predicción
     pred = model.predict(img_preprocesada)
     clase_predicha = np.argmax(pred, axis=1)[0]
     clase_nombre = clases[clase_predicha]
 
-    # predicción en el frame
     texto = f"Tipo de Snack: {clase_nombre}"
     cv2.putText(frame, texto, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-    # frame con la predicciónqq
     cv2.imshow("Cámara - Snack", frame)
 
-    # Salir 'q'
+    #Salir 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
